@@ -51,7 +51,7 @@ var totalTrials = 0; //counter for total trials
 var maxSpan; //value that will reflect a participant's maximum span (e.g., 6)
 var folder = "digits/"; //folder name for storing the audio files
 var bdsTrialNum = 1; //counter for trials
-var bdsTotalTrials = 12; //total number of desired trials
+var bdsTotalTrials = 2; //total number of desired trials
 var response = []; //for storing partcipants' responses
 var bds_correct_ans; //for storing the correct answer on a given trial
 var staircaseChecker = []; //for assessing whether the span should move up/down/stay
@@ -317,5 +317,10 @@ e.g., timeline.push(bds_adaptive)
 */
 
 var bds_adaptive = {
-	timeline: [bds_welcome, bds_mainproc, bds_wrapup]
+	timeline: [bds_welcome, bds_mainproc, bds_wrapup],
+	on_finish = function (data) {
+        /* Change 5: Summarizing and save the results to Qualtrics */
+        // summarize the results
+        console.log("All data")
+		console.log(jsPsych.data.get())
 };
