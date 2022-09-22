@@ -317,10 +317,5 @@ e.g., timeline.push(bds_adaptive)
 */
 
 var bds_adaptive = {
-	timeline: [bds_welcome, bds_mainproc, bds_wrapup],
-	on_finish = function (data) {
-        /* Change 5: Summarizing and save the results to Qualtrics */
-        // summarize the results
-        console.log("All data")
-		console.log(jsPsych.data.get())
+	timeline: [bds_welcome, bds_mainproc, bds_wrapup]
 };
