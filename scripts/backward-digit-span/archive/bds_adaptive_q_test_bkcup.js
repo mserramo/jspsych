@@ -42,7 +42,7 @@ Stephen Van Hedger, April 2020
 /** Main Variables and Functions **/
 /**********************************/
 
-var useAudio = true; // change to false if you want this to be a visual task!
+var useAudio = false; // change to false if you want this to be a visual task!
 
 var currentDigitList; //current digit list
 var reversedDigitString; //reversed digit string
@@ -69,24 +69,6 @@ const arrSum = arr => arr.reduce((a,b) => a + b, 0) //simple variable for calcul
 var aud_digits = ['digits/one.wav', 'digits/two.wav', 'digits/three.wav', 'digits/four.wav', 'digits/five.wav', 'digits/six.wav', 'digits/seven.wav', 'digits/eight.wav', 'digits/nine.wav']; //the digits
 
 
-//add to the dataframe whether the BDS was auditory or visual
-jsPsych.data.addProperties({
-BDS_modality: (useAudio ? 'auditory' : 'visual')
-});
-
-//file map for use in the auditory implementation
-var fileMap = {
-1: "one.wav",
-2: "two.wav",
-3: "three.wav",
-4: "four.wav",
-5: "five.wav",
-6: "six.wav",
-7: "seven.wav",
-8: "eight.wav",
-9: "nine.wav"
-};
-
 //function to push button responses to array
 var recordClick = function(elm) {
 		response.push(Number($(elm).text()))
@@ -99,10 +81,6 @@ var clearResponse = function() {
 		document.getElementById("echoed_txt").innerHTML = response;
 	}
 
-//function to map digit names to audio files (for auditory BDS)
-var digitToFile = function (digit) {
-		return folder + fileMap[digit];
-	};
 
 
 //function to shuffle an array (Fisher-Yates)
@@ -141,15 +119,9 @@ function getStimuli(numDigits) {
 	currentDigitList = getDigitList(numDigits);
 	reversedDigitString = "";
 	for (var i = 0; i < currentDigitList.length; i += 1) {
-		if (useAudio) {
-			digit = currentDigitList[i];
-			stimList.push(digitToFile(digit));
-			reversedDigitString = digit.toString() + reversedDigitString;
-		} else {
 			digit = currentDigitList[i].toString();
 			stimList.push('<p style="font-size:60px;font-weight:600;">' + digit + '</p>');
 			reversedDigitString = digit + reversedDigitString;
-		}
 	}
 	bds_correct_ans = currentDigitList.slice().reverse(); //this is the reversed array for assessing performance
 	return stimList;
@@ -198,23 +170,12 @@ var response_grid =
 '<button class = clear_button id = "ClearButton" onclick = "clearResponse()">Clear</button>'+
 '<p><u><b>Current Answer:</b></u></p><div id=echoed_txt style="font-size: 30px; color:blue;"><b></b></div></div>'
 
-//preload audio
-var preload_digits = {
-	type: 'preload',
-	audio: aud_digits
-};
-
 //Dynamic instructions based on whether it is an auditory or visual task
 var instructions;
-if (useAudio) {
-	instructions = '<p>On each trial, you will hear a sequence of digits and be asked to type them back in reverse order.</p>'+
-				   '<p>For example, if you heard the digits <b style="color:blue;">one</b>, <b style="color:blue;">two</b>, '+
-				   '<b style="color:blue;">three</b>, you would respond with <b style="color:blue;">3</b>, <b style="color:blue;">2</b>, <b style="color:blue;">1</b></p>';
-} else {
 	instructions = '<p>On each trial, you will see a sequence of digits and be asked to type them back in reverse order.</p>'+
 				   '<p>For example, if you saw the digits <b style="color:blue;">1</b>, <b style="color:blue;">2</b>, '+
 				   '<b style="color:blue;">3</b>, you would respond with <b style="color:blue;">3</b>, <b style="color:blue;">2</b>, <b style="color:blue;">1</b></p>';
-}
+
 
 var bds_welcome = {
 type: "html-button-response",
@@ -243,23 +204,6 @@ choices: ['Begin'],
 	}
 };
 
-//letter presentation
-var letter_bds = {
-	type: 'audio-keyboard-response',
-	stimulus: function(){return stimList[idx];},
-	choices: jsPsych.NO_KEYS,
-	post_trial_gap: 250,
-	trial_ends_after_audio: true,
-	on_finish: function(){
-		idx += 1; //update the index
-		//check to see if we are at the end of the letter array
-		if (idx == stimList.length) {
-			exitLetters = 1;
-		} else	{
-			exitLetters = 0;
-		}
-	}
-};
 
 //visual letter presentation
 var letter_bds_vis = {
@@ -280,18 +224,6 @@ var letter_bds_vis = {
 };
 
 //conditional loop of letters for the length of stimList...different procedures for visual and audio
-if(useAudio){
-	var letter_proc = {
-		timeline: [letter_bds],
-		loop_function: function(){
-			if(exitLetters == 0){
-				return true;
-			} else {
-				return false;
-			}
-		}
-	}
-} else {
 	var letter_proc = {
 		timeline: [letter_bds_vis],
 		loop_function: function(){
@@ -302,7 +234,7 @@ if(useAudio){
 			}
 		}
 	}
-};
+
 
 //response screen
 var bds_response_screen = {
@@ -385,5 +317,5 @@ e.g., timeline.push(bds_adaptive)
 */
 
 var bds_adaptive = {
-	timeline: [preload_digits, bds_welcome, bds_mainproc, bds_wrapup]
+	timeline: [bds_welcome, bds_mainproc, bds_wrapup]
 };

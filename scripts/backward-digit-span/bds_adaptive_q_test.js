@@ -60,10 +60,16 @@ var digit_list = [1,2,3,4,5,6,7,8,9]; //digits to be used (unlikely you will wan
 
 var startingSpan = 3; //where we begin in terms of span
 var currentSpan; //to reference where participants currently are
+var trials = [2, 4]
 var spanHistory = []; //easy logging of the participant's trajectory
 var stimList; //this is going to house the ordering of the stimuli for each trial
 var idx = 0; //for indexing the current letter to be presented
 var exitLetters; //for exiting the letter loop
+var AccCurrentSpan = " "
+var AccGotItRight = " "
+var AccAns = " "
+var AccCorr = " "
+var trialNumber = 1;
 
 const arrSum = arr => arr.reduce((a,b) => a + b, 0) //simple variable for calculating sum of an array
 var aud_digits = ['digits/one.wav', 'digits/two.wav', 'digits/three.wav', 'digits/four.wav', 'digits/five.wav', 'digits/six.wav', 'digits/seven.wav', 'digits/eight.wav', 'digits/nine.wav']; //the digits
@@ -193,9 +199,7 @@ stimulus: function(){return '<p>Trial '+bdsTrialNum+' of '+bdsTotalTrials+'</p>'
 choices: ['Begin'],
 	post_trial_gap: 500,
 	on_finish: function(){
-		if(bdsTrialNum == 1) {
-			currentSpan = startingSpan;
-		}
+		currentSpan = trials[trialNumber - 1]
 		stimList = getStimuli(currentSpan); //get the current stimuli for the trial
 		spanHistory[bdsTrialNum-1]=currentSpan; //log the current span in an array
 		bdsTrialNum += 1; //add 1 to the total trial count
@@ -255,7 +259,24 @@ choices: ['Enter'],
 		}
 		response = []; //clear the response for the next trial
 		staircaseIndex += 1; //update the staircase index
-		console.log(staircaseChecker);
+		// console.log(staircaseChecker);
+
+        var currentSpanAdd = "T" + trialNumber + ": " + currentSpan;
+        var gotItRightAdd = "T" + trialNumber + ": " + gotItRight;
+        var curansAdd = "T" + trialNumber + ": " + curans.join(' ');
+        var coransAdd = "T" + trialNumber + ": " + corans.join(' ');
+
+		console.log(currentSpanAdd)
+		console.log(gotItRightAdd)
+		console.log(curansAdd)
+		console.log(coransAdd)
+
+        AccCurrentSpan = AccCurrentSpan + " " + currentSpanAdd;
+        AccGotItRight = AccGotItRight + " " + gotItRightAdd;
+        AccAns = AccAns + " " + curansAdd;
+        AccCorr = AccCorr + " " + coransAdd;
+        trialNumber++; 
+
 
 		jsPsych.data.addDataToLastTrial({
 			designation: 'BDS-RESPONSE',
@@ -280,8 +301,12 @@ func: updateSpan
 }
 
 //the core procedure
+// var staircase = {
+// timeline: [setup_bds, letter_proc, bds_response_screen, staircase_assess]
+// }
+
 var staircase = {
-timeline: [setup_bds, letter_proc, bds_response_screen, staircase_assess]
+	timeline: [setup_bds, letter_proc, bds_response_screen]
 }
 
 //main procedure
