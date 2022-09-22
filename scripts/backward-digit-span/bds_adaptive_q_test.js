@@ -71,6 +71,17 @@ var AccAns = " "
 var AccCorr = " "
 var trialNumber = 1;
 
+var FullScreenOn = {
+    type: 'fullscreen',
+    message: "<p>Please open the button below to open the task in full screen mode.</p>",
+    button_label: 'Full Screen Mode',
+    fullscreen_mode: true
+}
+var FullScreenOff = {
+    type: 'fullscreen',
+    fullscreen_mode: false
+}
+
 const arrSum = arr => arr.reduce((a,b) => a + b, 0) //simple variable for calculating sum of an array
 var aud_digits = ['digits/one.wav', 'digits/two.wav', 'digits/three.wav', 'digits/four.wav', 'digits/five.wav', 'digits/six.wav', 'digits/seven.wav', 'digits/eight.wav', 'digits/nine.wav']; //the digits
 
@@ -326,11 +337,11 @@ var bds_mainproc = {
 /** Wrap-Up **/
 /*************/
 
-var bds_wrapup = {
-type: 'html-button-response',
-stimulus: '<p>Thank you for your participation. This concludes the digit span.</p>',
-choices: ['Exit']
-};
+// var bds_wrapup = {
+// type: 'html-button-response',
+// stimulus: '<p>Thank you for your participation. This concludes the digit span.</p>',
+// choices: ['Exit']
+// };
 
 /////////////////////////
 // 1. final procedure //
@@ -341,6 +352,10 @@ variable in your main html files -
 e.g., timeline.push(bds_adaptive)
 */
 
+// var bds_adaptive = {
+// 	timeline: [FullScreenOn, bds_welcome, bds_mainproc, bds_wrapup]
+// };
+
 var bds_adaptive = {
-	timeline: [bds_welcome, bds_mainproc, bds_wrapup]
+	timeline: [FullScreenOn, bds_welcome, bds_mainproc]
 };

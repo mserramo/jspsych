@@ -9,6 +9,7 @@
 <script src="jspsych-6.3.0/plugins/jspsych-html-keyboard-response.js"></script>
 <script src="jspsych-6.3.0/plugins/jspsych-call-function.js"></script>
 <script src="jspsych-6.3.0/plugins/jspsych-preload.js"></script>
+<script src="jspsych-6.3.0/plugins/jspsych-fullscreen.js"></script>
 <script src="bds_adaptive_q_test.js"></script>
 
 <link href="jspsych-6.3.0/css/jspsych.css" rel="stylesheet" type="text/css">
@@ -57,7 +58,7 @@ var endscreen = {
 timeline.push(bds_adaptive); //from bds_adaptive.js
 timeline.push(save_data); //from bds_adaptive.js
 timeline.push(endscreen); //from bds_adaptive.js
-
+timeline.push(FullScreenOff);
 //Initialize the Experiment
 jsPsych.init({
 	timeline: timeline
