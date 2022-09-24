@@ -199,7 +199,7 @@ var response_grid =
 
 //Dynamic instructions based on whether it is an auditory or visual task
 var instructions;
-	instructions = '<p>The game has several trials. On each trial, you will see a sequence of digits and be asked to type them back in reverse order.</p>'+
+	instructions = '<p>The game has several trials. On each trial, you will see a sequence of digits and be asked to type them back in <u><b>REVERSE</b></u> order.</p>'+
 				   '<p>For example, if you saw the digits <b style="color:blue;">1</b>, <b style="color:blue;">2</b>, '+
 				   '<b style="color:blue;">3</b>, you would respond with <b style="color:blue;">3</b>, <b style="color:blue;">2</b>, <b style="color:blue;">1</b></p>';
 
@@ -215,15 +215,15 @@ choices: ['Continue']
 var bds_practice_intro = {
 	type: "html-button-response",
 	stimulus: '<p>Before we start the game, there will be a short practice so that you familiarize with it.</p>' +
-		'<br> <br> <p> Please click on the button below to start the practice.</p>',
+		'<br><p> Please click on the button below to start the practice.</p>',
 	choices: ['Continue']
 	};
 
 
 var bds_practice_outro = {
 	type: "html-button-response",
-	stimulus: '<p>You have finished the practice section. Now, you will have to complete to complete the actual game. </p>' +
-		'<br> <br> <p> Before you start again, remember: you will be asked to type the sequence of items you see in <b> reverse </b> order.</p>',
+	stimulus: '<p>You have finished the practice section. Now, you will have to complete the actual game. </p>' +
+		'<br> <p> Before you start again, remember: you will be asked to type the sequence of items you see in <b> reverse </b> order.</p>',
 	choices: ['Continue']
 	};
 
@@ -339,24 +339,28 @@ choices: ['Enter'],
 	}
 };
 
+var PracGotItRight;
+var PracCurans;
+var PracCorans;
+
 var bds_prac_response_screen = {
 	type: 'html-keyboard-response',
 	stimulus: response_grid,
 	choices: ['Enter'],
 		on_finish: function(data){
-			var curans = response;
-			var corans = bds_correct_ans;
-			if(JSON.stringify(curans) === JSON.stringify(corans)) {
-				var gotItRight = 1;
+			 PracCurans = response;
+			 PracCorans = bds_correct_ans;
+			if(JSON.stringify(PracCurans) === JSON.stringify(PracCorans)) {
+				PracGotItRight = 1;
 			} else {
-				var gotItRight = 0;
+				PracGotItRight = 0;
 			}
 			response = []; //clear the response for the next trial
 	
 			var currentSpanAdd = "T" + PracTrialNumber + ": " + currentSpan;
-			var gotItRightAdd = "T" + PracTrialNumber + ": " + gotItRight;
-			var curansAdd = "T" + PracTrialNumber + ": " + curans.join(' ');
-			var coransAdd = "T" + PracTrialNumber + ": " + corans.join(' ');
+			var gotItRightAdd = "T" + PracTrialNumber + ": " + PracGotItRight;
+			var curansAdd = "T" + PracTrialNumber + ": " + PracCurans.join(' ');
+			var coransAdd = "T" + PracTrialNumber + ": " + PracCorans.join(' ');
 	
 			console.log(currentSpanAdd)
 			console.log(gotItRightAdd)
@@ -372,6 +376,25 @@ var bds_prac_response_screen = {
 
 		}
 	};
+
+var bds_prac_feedback = {
+	type: 'html-button-response',
+	stimulus: function(){
+		if(PracGotItRight == 1){
+			var feedback = "Your answer was <b>correct</b>. Please click the button below to continue."
+			return(feedback)
+		} else {
+			let originalOrder = JSON.parse(JSON.stringify(PracCorans)).reverse()
+			var feedback = "Your answer was <b>incorrect</b>." 
+			feedback = feedback + "<br><br>You saw the sequence " + originalOrder + " so you should have typed " + PracCorans + "."
+			feedback = feedback + " Instead, you typed " + PracCurans
+			feedback = feedback + "<br><br> Please click the button below to continue."
+			return(feedback)
+		}
+	},
+	choices: ['Continue']
+}
+
 /*********************/
 /** Main Procedures **/
 /*********************/
@@ -381,7 +404,7 @@ var staircase = {
 }
 
 var prac_staircase = {
-	timeline: [setup_prac_bds, letter_proc, bds_prac_response_screen]
+	timeline: [setup_prac_bds, letter_proc, bds_prac_response_screen, bds_prac_feedback]
 }
 
 
