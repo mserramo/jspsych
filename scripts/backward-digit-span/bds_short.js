@@ -52,7 +52,7 @@ var maxSpan; //value that will reflect a participant's maximum span (e.g., 6)
 var folder = "digits/"; //folder name for storing the audio files
 var bdsTrialNum = 1; //counter for trials
 
-var bdsTotalTrials = 10; //total number of desired trials
+var bdsTotalTrials = 8; //total number of desired trials
 var response = []; //for storing partcipants' responses
 var bds_correct_ans; //for storing the correct answer on a given trial
 var staircaseChecker = []; //for assessing whether the span should move up/down/stay
@@ -61,7 +61,7 @@ var digit_list = [1,2,3,4,5,6,7,8,9]; //digits to be used (unlikely you will wan
 
 var startingSpan = 3; //where we begin in terms of span
 var currentSpan; //to reference where participants currently are
-var trials = [3,3,4,4,5,5,6,6,7,7];
+var trials = [3,3,4,4,5,5,6,6];
 var spanHistory = []; //easy logging of the participant's trajectory
 var stimList; //this is going to house the ordering of the stimuli for each trial
 var idx = 0; //for indexing the current letter to be presented
