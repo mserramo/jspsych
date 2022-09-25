@@ -42,7 +42,7 @@ Stephen Van Hedger, April 2020
 /** Main Variables and Functions **/
 /**********************************/
 
-var useAudio = true; // change to false if you want this to be a visual task!
+var useAudio = false; // change to false if you want this to be a visual task!
 
 var currentDigitList; //current digit list
 var reversedDigitString; //reversed digit string
@@ -51,7 +51,8 @@ var totalTrials = 0; //counter for total trials
 var maxSpan; //value that will reflect a participant's maximum span (e.g., 6)
 var folder = "digits/"; //folder name for storing the audio files
 var bdsTrialNum = 1; //counter for trials
-var bdsTotalTrials = 2; //total number of desired trials
+
+var bdsTotalTrials = 10; //total number of desired trials
 var response = []; //for storing partcipants' responses
 var bds_correct_ans; //for storing the correct answer on a given trial
 var staircaseChecker = []; //for assessing whether the span should move up/down/stay
@@ -60,32 +61,42 @@ var digit_list = [1,2,3,4,5,6,7,8,9]; //digits to be used (unlikely you will wan
 
 var startingSpan = 3; //where we begin in terms of span
 var currentSpan; //to reference where participants currently are
+var trials = [3,3,4,4,5,5,6,6,7,7];
 var spanHistory = []; //easy logging of the participant's trajectory
 var stimList; //this is going to house the ordering of the stimuli for each trial
 var idx = 0; //for indexing the current letter to be presented
 var exitLetters; //for exiting the letter loop
+var AccCurrentSpan = " "
+var AccGotItRight = " "
+var AccAns = " "
+var AccCorr = " "
+var trialNumber = 1;
+
+// Practice parameters
+var PracBdsTrialNum=1;
+var PracBdsTotalTrials=4;
+
+var PracTrials = [2,2,3,3];
+var PracAccCurrentSpan = " "
+var PracAccGotItRight = " "
+var PracAccAns = " "
+var PracAccCorr = " "
+var PracTrialNumber = 1;
+var PracspanHistory = [];
+var FullScreenOn = {
+    type: 'fullscreen',
+    message: "<p>Please open the button below to open the task in full screen mode.</p>",
+    button_label: 'Full Screen Mode',
+    fullscreen_mode: true
+}
+var FullScreenOff = {
+    type: 'fullscreen',
+    fullscreen_mode: false
+}
 
 const arrSum = arr => arr.reduce((a,b) => a + b, 0) //simple variable for calculating sum of an array
 var aud_digits = ['digits/one.wav', 'digits/two.wav', 'digits/three.wav', 'digits/four.wav', 'digits/five.wav', 'digits/six.wav', 'digits/seven.wav', 'digits/eight.wav', 'digits/nine.wav']; //the digits
 
-
-//add to the dataframe whether the BDS was auditory or visual
-jsPsych.data.addProperties({
-BDS_modality: (useAudio ? 'auditory' : 'visual')
-});
-
-//file map for use in the auditory implementation
-var fileMap = {
-1: "one.wav",
-2: "two.wav",
-3: "three.wav",
-4: "four.wav",
-5: "five.wav",
-6: "six.wav",
-7: "seven.wav",
-8: "eight.wav",
-9: "nine.wav"
-};
 
 //function to push button responses to array
 var recordClick = function(elm) {
@@ -98,12 +109,6 @@ var clearResponse = function() {
 		response = [];
 		document.getElementById("echoed_txt").innerHTML = response;
 	}
-
-//function to map digit names to audio files (for auditory BDS)
-var digitToFile = function (digit) {
-		return folder + fileMap[digit];
-	};
-
 
 //function to shuffle an array (Fisher-Yates)
 function shuffle(a) {
@@ -141,15 +146,9 @@ function getStimuli(numDigits) {
 	currentDigitList = getDigitList(numDigits);
 	reversedDigitString = "";
 	for (var i = 0; i < currentDigitList.length; i += 1) {
-		if (useAudio) {
-			digit = currentDigitList[i];
-			stimList.push(digitToFile(digit));
-			reversedDigitString = digit.toString() + reversedDigitString;
-		} else {
 			digit = currentDigitList[i].toString();
 			stimList.push('<p style="font-size:60px;font-weight:600;">' + digit + '</p>');
 			reversedDigitString = digit + reversedDigitString;
-		}
 	}
 	bds_correct_ans = currentDigitList.slice().reverse(); //this is the reversed array for assessing performance
 	return stimList;
@@ -198,43 +197,54 @@ var response_grid =
 '<button class = clear_button id = "ClearButton" onclick = "clearResponse()">Clear</button>'+
 '<p><u><b>Current Answer:</b></u></p><div id=echoed_txt style="font-size: 30px; color:blue;"><b></b></div></div>'
 
-//preload audio
-var preload_digits = {
-	type: 'preload',
-	audio: aud_digits
-};
-
 //Dynamic instructions based on whether it is an auditory or visual task
 var instructions;
-if (useAudio) {
-	instructions = '<p>On each trial, you will hear a sequence of digits and be asked to type them back in reverse order.</p>'+
-				   '<p>For example, if you heard the digits <b style="color:blue;">one</b>, <b style="color:blue;">two</b>, '+
-				   '<b style="color:blue;">three</b>, you would respond with <b style="color:blue;">3</b>, <b style="color:blue;">2</b>, <b style="color:blue;">1</b></p>';
-} else {
-	instructions = '<p>On each trial, you will see a sequence of digits and be asked to type them back in reverse order.</p>'+
+	instructions = '<p>The game has several trials. On each trial, you will see a sequence of digits and be asked to type them back in <u><b>REVERSE</b></u> order.</p>'+
 				   '<p>For example, if you saw the digits <b style="color:blue;">1</b>, <b style="color:blue;">2</b>, '+
 				   '<b style="color:blue;">3</b>, you would respond with <b style="color:blue;">3</b>, <b style="color:blue;">2</b>, <b style="color:blue;">1</b></p>';
-}
+
 
 var bds_welcome = {
 type: "html-button-response",
-stimulus: '<p>Welcome to the <b>digit span task.</b></p>' +instructions +
+stimulus: '<p>Welcome to the this game. </b></p>' +instructions +
 	'<p>To ensure high quality data, it is very important that you do not use any memory aid (e.g., pen and paper).<br>Please do the task solely in your head.</p>' +
-	'<p>There will be '+bdsTotalTrials+' total trials. Participation takes around 10 minutes.</p>',
+	'<p> In total, this game will take around 5 minutes.</p>',
 choices: ['Continue']
 };
+
+var bds_practice_intro = {
+	type: "html-button-response",
+	stimulus: '<p>Before we start the game, there will be a short practice so that you familiarize with it.</p>' +
+		'<br><p> Please click on the button below to start the practice.</p>',
+	choices: ['Continue']
+	};
+
+
+var bds_practice_outro = {
+	type: "html-button-response",
+	stimulus: '<p>You have finished the practice section. Now, you will have to complete the actual game. </p>' +
+		'<br> <p> Before you start again, remember: you will be asked to type the sequence of items you see in <b> reverse </b> order.</p>',
+	choices: ['Continue']
+	};
 
 
 //set-up screen
 var setup_bds = {
 type: 'html-button-response',
-stimulus: function(){return '<p>Trial '+bdsTrialNum+' of '+bdsTotalTrials+'</p>';},
+stimulus: function(){
+	var continue1 = 'Please click the button below to start the next trial.'
+	var continue2 = '<p>Trial '+ bdsTrialNum+' of '+bdsTotalTrials+'</p>';
+	if(bdsTrialNum > 6){
+		return continue2
+	}
+ 	else{
+	 	return continue1
+	};
+},
 choices: ['Begin'],
 	post_trial_gap: 500,
 	on_finish: function(){
-		if(bdsTrialNum == 1) {
-			currentSpan = startingSpan;
-		}
+		currentSpan = trials[trialNumber - 1]
 		stimList = getStimuli(currentSpan); //get the current stimuli for the trial
 		spanHistory[bdsTrialNum-1]=currentSpan; //log the current span in an array
 		bdsTrialNum += 1; //add 1 to the total trial count
@@ -243,24 +253,21 @@ choices: ['Begin'],
 	}
 };
 
-//letter presentation
-var letter_bds = {
-	type: 'audio-keyboard-response',
-	stimulus: function(){return stimList[idx];},
-	choices: jsPsych.NO_KEYS,
-	post_trial_gap: 250,
-	trial_ends_after_audio: true,
-	on_finish: function(){
-		idx += 1; //update the index
-		//check to see if we are at the end of the letter array
-		if (idx == stimList.length) {
-			exitLetters = 1;
-		} else	{
-			exitLetters = 0;
+//set-up screen
+var setup_prac_bds = {
+	type: 'html-button-response',
+	stimulus: function(){return '<p>Practice Trial '+PracBdsTrialNum+' of '+PracBdsTotalTrials+'</p>';},
+	choices: ['Begin'],
+		post_trial_gap: 500,
+		on_finish: function(){
+			currentSpan = trials[PracTrialNumber - 1]
+			stimList = getStimuli(currentSpan); //get the current stimuli for the trial
+			PracspanHistory[PracBdsTrialNum-1]=currentSpan; //log the current span in an array
+			PracBdsTrialNum += 1; //add 1 to the total trial count
+			idx = 0; //reset the index prior to the letter presentation
+			exitLetters = 0; //reset the exit letter variable
 		}
-	}
-};
-
+	};
 //visual letter presentation
 var letter_bds_vis = {
 	type: 'html-keyboard-response',
@@ -280,18 +287,6 @@ var letter_bds_vis = {
 };
 
 //conditional loop of letters for the length of stimList...different procedures for visual and audio
-if(useAudio){
-	var letter_proc = {
-		timeline: [letter_bds],
-		loop_function: function(){
-			if(exitLetters == 0){
-				return true;
-			} else {
-				return false;
-			}
-		}
-	}
-} else {
 	var letter_proc = {
 		timeline: [letter_bds_vis],
 		loop_function: function(){
@@ -302,7 +297,7 @@ if(useAudio){
 			}
 		}
 	}
-};
+
 
 //response screen
 var bds_response_screen = {
@@ -323,7 +318,24 @@ choices: ['Enter'],
 		}
 		response = []; //clear the response for the next trial
 		staircaseIndex += 1; //update the staircase index
-		console.log(staircaseChecker);
+		// console.log(staircaseChecker);
+
+        var currentSpanAdd = "T" + trialNumber + ": " + currentSpan;
+        var gotItRightAdd = "T" + trialNumber + ": " + gotItRight;
+        var curansAdd = "T" + trialNumber + ": " + curans.join(' ');
+        var coransAdd = "T" + trialNumber + ": " + corans.join(' ');
+
+		console.log(currentSpanAdd)
+		console.log(gotItRightAdd)
+		console.log(curansAdd)
+		console.log(coransAdd)
+
+        AccCurrentSpan = AccCurrentSpan + " " + currentSpanAdd;
+        AccGotItRight = AccGotItRight + " " + gotItRightAdd;
+        AccAns = AccAns + " " + curansAdd;
+        AccCorr = AccCorr + " " + coransAdd;
+        trialNumber++; 
+
 
 		jsPsych.data.addDataToLastTrial({
 			designation: 'BDS-RESPONSE',
@@ -336,21 +348,74 @@ choices: ['Enter'],
 	}
 };
 
+var PracGotItRight;
+var PracCurans;
+var PracCorans;
+
+var bds_prac_response_screen = {
+	type: 'html-keyboard-response',
+	stimulus: response_grid,
+	choices: ['Enter'],
+		on_finish: function(data){
+			 PracCurans = response;
+			 PracCorans = bds_correct_ans;
+			if(JSON.stringify(PracCurans) === JSON.stringify(PracCorans)) {
+				PracGotItRight = 1;
+			} else {
+				PracGotItRight = 0;
+			}
+			response = []; //clear the response for the next trial
+	
+			var currentSpanAdd = "T" + PracTrialNumber + ": " + currentSpan;
+			var gotItRightAdd = "T" + PracTrialNumber + ": " + PracGotItRight;
+			var curansAdd = "T" + PracTrialNumber + ": " + PracCurans.join(' ');
+			var coransAdd = "T" + PracTrialNumber + ": " + PracCorans.join(' ');
+	
+			console.log(currentSpanAdd)
+			console.log(gotItRightAdd)
+			console.log(curansAdd)
+			console.log(coransAdd)
+	
+			PracAccCurrentSpan = PracAccCurrentSpan + " " + currentSpanAdd;
+			PracAccGotItRight = PracAccGotItRight + " " + gotItRightAdd;
+			PracAccAns = PracAccAns + " " + curansAdd;
+			PracAccCorr = PracAccCorr + " " + coransAdd;
+			PracTrialNumber++; 
+	
+
+		}
+	};
+
+var bds_prac_feedback = {
+	type: 'html-button-response',
+	stimulus: function(){
+		if(PracGotItRight == 1){
+			var feedback = "Your answer was <b>correct</b>. Please click the button below to continue."
+			return(feedback)
+		} else {
+			let originalOrder = JSON.parse(JSON.stringify(PracCorans)).reverse()
+			var feedback = "Your answer was <b>incorrect</b>." 
+			feedback = feedback + "<br><br>You saw the sequence " + originalOrder + " so you should have typed " + PracCorans + "."
+			feedback = feedback + " Instead, you typed " + PracCurans
+			feedback = feedback + "<br><br> Please click the button below to continue."
+			return(feedback)
+		}
+	},
+	choices: ['Continue']
+}
 
 /*********************/
 /** Main Procedures **/
 /*********************/
 
-//call function to update the span if necessary
-var staircase_assess = {
-type: 'call-function',
-func: updateSpan
+var staircase = {
+	timeline: [setup_bds, letter_proc, bds_response_screen]
 }
 
-//the core procedure
-var staircase = {
-timeline: [setup_bds, letter_proc, bds_response_screen, staircase_assess]
+var prac_staircase = {
+	timeline: [setup_prac_bds, letter_proc, bds_prac_response_screen, bds_prac_feedback]
 }
+
 
 //main procedure
 var bds_mainproc = {
@@ -365,25 +430,23 @@ var bds_mainproc = {
 	}
 };
 
+var bds_prac_mainproc = {
+	timeline: [prac_staircase],
+	loop_function: function(){
+		//if we haev reached the specified total trial amount, exit
+		if(PracBdsTrialNum > PracBdsTotalTrials) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+};
+
 /*************/
 /** Wrap-Up **/
 /*************/
 
-var bds_wrapup = {
-type: 'html-button-response',
-stimulus: '<p>Thank you for your participation. This concludes the digit span.</p>',
-choices: ['Exit']
-};
-
-/////////////////////////
-// 1. final procedure //
-////////////////////////
-/*
-Simply push this to your timeline
-variable in your main html files -
-e.g., timeline.push(bds_adaptive)
-*/
 
 var bds_adaptive = {
-	timeline: [preload_digits, bds_welcome, bds_mainproc, bds_wrapup]
+	timeline: [FullScreenOn, bds_welcome, bds_practice_intro, bds_prac_mainproc, bds_practice_outro, bds_mainproc]
 };

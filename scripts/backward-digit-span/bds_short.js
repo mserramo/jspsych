@@ -231,7 +231,16 @@ var bds_practice_outro = {
 //set-up screen
 var setup_bds = {
 type: 'html-button-response',
-stimulus: function(){return '<p>Trial '+bdsTrialNum+' of '+bdsTotalTrials+'</p>';},
+stimulus: function(){
+	var continue1 = 'Please click the button below to start the next trial.'
+	var continue2 = '<p>Trial '+ bdsTrialNum+' of '+bdsTotalTrials+'</p>';
+	if(bdsTrialNum > 6){
+		return continue2
+	}
+ 	else{
+	 	return continue1
+	};
+},
 choices: ['Begin'],
 	post_trial_gap: 500,
 	on_finish: function(){
@@ -247,7 +256,7 @@ choices: ['Begin'],
 //set-up screen
 var setup_prac_bds = {
 	type: 'html-button-response',
-	stimulus: function(){return '<p>Trial '+PracBdsTrialNum+' of '+PracBdsTotalTrials+'</p>';},
+	stimulus: function(){return '<p>Practice Trial '+PracBdsTrialNum+' of '+PracBdsTotalTrials+'</p>';},
 	choices: ['Begin'],
 		post_trial_gap: 500,
 		on_finish: function(){

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Digit Span</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="jspsych-6.3.0/jspsych.js"></script>
+<script src="jspsych-6.3.0/plugins/jspsych-audio-keyboard-response.js"></script>
+<script src="jspsych-6.3.0/plugins/jspsych-html-button-response.js"></script>
+<script src="jspsych-6.3.0/plugins/jspsych-html-keyboard-response.js"></script>
+<script src="jspsych-6.3.0/plugins/jspsych-call-function.js"></script>
+<script src="jspsych-6.3.0/plugins/jspsych-preload.js"></script>
+<script src="jspsych-6.3.0/plugins/jspsych-fullscreen.js"></script>
+<script src="bds_long.js"></script>
+
+<link href="jspsych-6.3.0/css/jspsych.css" rel="stylesheet" type="text/css">
+<link href="jspsych-6.3.0/css/bds-style.css" rel="stylesheet" type="text/css">
+
+</head>
+<body>
+<script>
+
+//Define Timeline
+var timeline = [];
+
+
+//Function to give the option for a local save of the data
+var localSave;
+
+function saveData() {
+	console.log("That's all, folks")
+	console.log(jsPsych.data.get())
+	
+}
+
+var save_data = {
+    type: 'call-function',
+    func: function() {
+		console.log("Current Span History")
+        console.log(AccCurrentSpan)
+		console.log("Correct Trial")
+		console.log(AccGotItRight) 
+		console.log("Answers")
+		console.log(AccAns)
+		console.log("Correct Answers")
+		console.log(AccCorr)
+    }
+}
+
+var endscreen = {
+	type: 'html-button-response',
+	stimulus: '<p>This concludes the task. Please click end to continue.</p>',
+	choices: ['End'],
+	};
+//Final screen
+
+
+//Push components to experiment timeline
+timeline.push(bds_adaptive); //from bds_adaptive.js
+timeline.push(save_data); //from bds_adaptive.js
+timeline.push(endscreen); //from bds_adaptive.js
+timeline.push(FullScreenOff);
+//Initialize the Experiment
+jsPsych.init({
+	timeline: timeline
+});
+
+</script>
+</body>
+</html>
