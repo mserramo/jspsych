@@ -85,7 +85,7 @@ var PracTrialNumber = 1;
 var PracspanHistory = [];
 var FullScreenOn = {
     type: 'fullscreen',
-    message: "<p>Please open the button below to open the task in full screen mode.</p>",
+    message: "<p>Please click the button below to open the game in full screen mode.</p>",
     button_label: 'Full Screen Mode',
     fullscreen_mode: true
 }
