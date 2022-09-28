@@ -61,7 +61,7 @@ var digit_list = [1,2,3,4,5,6,7,8,9]; //digits to be used (unlikely you will wan
 
 var startingSpan = 3; //where we begin in terms of span
 var currentSpan; //to reference where participants currently are
-var trials = [3,3,4,4,5,5,6,6,6,6,7,7];
+var trials = [3,3,4,4,5,5,6,6,7,7,8,8];
 var spanHistory = []; //easy logging of the participant's trajectory
 var stimList; //this is going to house the ordering of the stimuli for each trial
 var idx = 0; //for indexing the current letter to be presented
@@ -201,21 +201,22 @@ var response_grid =
 var instructions;
 	instructions = '<p>The game has several trials. On each trial, you will see a sequence of digits and be asked to type them back in <u><b>REVERSE</b></u> order.</p>'+
 				   '<p>For example, if you saw the digits <b style="color:blue;">1</b>, <b style="color:blue;">2</b>, '+
-				   '<b style="color:blue;">3</b>, you would respond with <b style="color:blue;">3</b>, <b style="color:blue;">2</b>, <b style="color:blue;">1</b></p>';
+				   '<b style="color:blue;">3</b>, you would respond with <b style="color:blue;">3</b>, <b style="color:blue;">2</b>, <b style="color:blue;">1</b></p>' +
+				   '<p>The number of digits will vary across trials. </p>';
 
 
 var bds_welcome = {
 type: "html-button-response",
-stimulus: '<p>Welcome to the this game. </b></p>' +instructions +
-	'<p>To ensure high quality data, it is very important that you do not use any memory aid (e.g., pen and paper).<br>Please do the task solely in your head.</p>' +
-	'<p> In total, this game will take around 5 minutes.</p>',
+stimulus: '<p>Welcome to this game. </b></p>' +instructions +
+	'<p>To ensure high quality data, it is very important that you do not use any memory aid (e.g., pen and paper).</p>' + 
+	'<p><u>Please do not stop until you have finished the game.</u></p>',
 choices: ['Continue']
 };
 
 var bds_practice_intro = {
 	type: "html-button-response",
 	stimulus: '<p>Before we start the game, there will be a short practice so that you familiarize with it.</p>' +
-		'<br><p> Please click on the button below to start the practice.</p>',
+		'<p> Please click on the button below to start the practice.</p>',
 	choices: ['Continue']
 	};
 
@@ -223,7 +224,7 @@ var bds_practice_intro = {
 var bds_practice_outro = {
 	type: "html-button-response",
 	stimulus: '<p>You have finished the practice section. Now, you will have to complete the actual game. </p>' +
-		'<br> <p> Before you start again, remember: you will be asked to type the sequence of items you see in <b> reverse </b> order.</p>',
+		'<p> Before you start again, remember: you will be asked to type the sequence of items you see in <b> reverse </b> order.</p>',
 	choices: ['Continue']
 	};
 
